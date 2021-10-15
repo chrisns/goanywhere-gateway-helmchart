@@ -5,10 +5,11 @@
 ## Usage
 
 ```
+helm repo add goanywhere https://chrisns.github.io/goanywhere-gateway-helmchart
 helm install \
   --set license=$(cat licensefile|base64) \
   goanywhere \
-  https://github.com/chrisns/goanywhere-gateway-helmchart/archive/refs/heads/main.tar.gz
+  goanywhere/goanywhere-gateway
 ```
 
 ## Remove
