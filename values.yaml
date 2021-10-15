@@ -7,7 +7,6 @@ image:
 
 imagePullSecrets: []
 nameOverride: ""
-fullnameOverride: ""
 
 podAnnotations: {}
 
@@ -37,3 +36,5 @@ resources:
 tolerations: []
 
 affinity: {}
+
+licence: ""

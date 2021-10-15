@@ -42,6 +42,11 @@ spec:
             httpGet:
               path: /
               port: http
+          volumeMounts:
+          - name: licence
+            mountPath: "/usr/local/HelpSystems/Gateway/gateway.lic"
+            subPath: licence
+            readOnly: true
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
@@ -57,3 +62,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: licence
+          secret:
+            secretName: {{ include "goanywhere-gateway.fullname" . }}
