@@ -3,7 +3,7 @@ name: goanywhere-gateway
 description: HelpSystems GoAnywhere Gateway
 icon: https://static.goanywhere.com/images/logos/ga-hs-color-logo.svg
 type: application
-version: 0.1.0
+version: 0.1.1
 appVersion: 2.8.1
 maintainers:
   - name: chrisns

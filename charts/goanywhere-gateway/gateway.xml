@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gateway controllerAddress="10.1.0.55" controllerPort="9100"
+	dataAddress="10.1.0.55" dataPort="9101" shutdownPort="9105"
+	proxyEnabled="true" proxyAddress="10.1.0.55"
+	proxyPort="9102"
+	passiveProxyAddress="10.1.0.55"
+	passiveProxyPortRangeFrom="30000"
+	passiveProxyPortRangeTo="32000"
+	forwardProxyLocalAddress="10.1.0.55"
+	udpEnabled="true"
+	udpInternalAddress="10.1.0.55"
+	udpInternalPortRangeFrom="9201"
+	udpInternalPortRangeTo="9300"
+	udpExternalAddress="10.1.0.55"
+	udpExternalPortRangeFrom="32001"
+	udpExternalPortRangeTo="32100"
+	minThreads="10" maxThreads="2000" threadKeepAlive="60" udpTimeout="10">
+	<rules>
+		<rule name="default">
+			<loadBalancer algorithm="roundrobin" />
+		</rule>
+		<rule name="https">
+			<loadBalancer algorithm="roundrobin">
+				<sessionPersistence type="ip" timeout="300" />
+			</loadBalancer>
+		</rule>
+		<rule name="agent">
+			<loadBalancer algorithm="roundrobin">
+				<sessionPersistence type="agentIP" />
+			</loadBalancer>
+		</rule>
+	</rules>
+</gateway>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="error" strict="true">
+	<Appenders>
+
+		<!-- This is the default appender which saves log messages to a file. The
+			file location is configurable with the fileName parameter below. You can
+			also define maximum size allowed for the log file, after which the
+			file will be rolled. The DefaultRolloverStrategy element allows you to retain
+			the specified number of rolled files. If you are using backslash in
+			the file parameter (for example on a Windows system), make sure to
+			escape with another backslash (e.g. C:\\logs\\gagateway.log). -->
+
+		<RollingFile name="FileAppender" fileName="logs/gagateway.log" filePattern="logs/gagateway.log.%i">
+			<Policies>
+				<SizeBasedTriggeringPolicy size="5 MB"/>
+			</Policies>
+			<DefaultRolloverStrategy fileIndex="min" min="1" max="10" />
+			<PatternLayout>
+				<Pattern>%d{yyyy-MM-dd hh:mm:ss a} %-5p %m%n</Pattern>
+			</PatternLayout>
+		</RollingFile>
+
+		<!-- An appender for sending log messages to the console when running Gateway
+			interactively instead of as a background service. You would not normally
+			need this appender. If you do need it, uncomment the section below. -->
+		<!--
+		<Console name="ConsoleAppender" target="SYSTEM_OUT">
+			<PatternLayout>
+				<Pattern>%d{yyyy-MM-dd hh:mm:ss a} %-5p %m%n</Pattern>
+			</PatternLayout>
+		</Console>
+ 		-->
+
+		<!-- An appender for logging messages to a Syslog server. The Protocol
+			parameter can be either UDP or TCP depending on if the messages are to be
+			sent over UDP or TCP respectively. The facility parameter identifies the
+			Syslog facility to log the messages. The host parameter specifies the
+			host name or IP address of the Syslog server to which messages are to be
+			sent. Uncomment the following block if you want to enable Syslogs. -->
+		<!--
+		<Syslog name="SyslogAppender" host="localhost" port="514" protocol="UDP"
+			facility="user" appName="gagateway" charset="UTF-8">
+			<PatternLayout>
+				<Pattern>%-5p %m</Pattern>
+			</PatternLayout>
+		</Syslog>
+		-->
+
+	</Appenders>
+	<Loggers>
+		<!-- A logger for logging messages to various appenders at the specified
+			level. The level parameter can be error, warn, info, debug, trace and all.
+			You can add multiple Appender-Ref elements to send the messages to one or
+			more pre-defined destinations (appenders). -->
+		<Logger name="com.linoma.gag" level="info" additivity="false">
+			<AppenderRef ref="FileAppender" />
+			<!-- <AppenderRef ref="ConsoleAppender" /> -->
+			<!-- <AppenderRef ref="SyslogAppender" /> -->
+		</Logger>
+
+		<!-- A logger for logging messages that are from any third-party APIs. -->
+		<Root level="error">
+			<AppenderRef ref="FileAppender" />
+			<!-- <AppenderRef ref="ConsoleAppender" /> -->
+			<!-- <AppenderRef ref="SyslogAppender" /> -->
+		</Root>
+	</Loggers>
+
+</Configuration>
