@@ -37,4 +37,4 @@ tolerations: []
 
 affinity: {}
 
-licence: ""
+license: ""

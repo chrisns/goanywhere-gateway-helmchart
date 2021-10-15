@@ -4,7 +4,7 @@
 
 ```
 helm install \
-  --set licence=$(cat licencefile|base64) \
+  --set license=$(cat licensefile|base64) \
   goanywhere \
   .
 ```

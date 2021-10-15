@@ -43,9 +43,9 @@ spec:
               path: /
               port: http
           volumeMounts:
-          - name: licence
+          - name: license
             mountPath: "/usr/local/HelpSystems/Gateway/gateway.lic"
-            subPath: licence
+            subPath: license
             readOnly: true
           resources:
             limits:
@@ -63,6 +63,6 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        - name: licence
+        - name: license
           secret:
             secretName: {{ include "goanywhere-gateway.fullname" . }}
