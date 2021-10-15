@@ -5,10 +5,9 @@
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: helpsystems/goanywhere-gateway
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: 2.8.1
 
 imagePullSecrets: []
 nameOverride: ""
