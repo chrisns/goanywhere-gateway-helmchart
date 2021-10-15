@@ -10,6 +10,7 @@ spec:
   containers:
     - name: wget
       image: busybox
-      command: ['wget']
-      args: ['{{ include "goanywhere-gateway.fullname" . }}:{{ .Values.service.port }}']
+      command: ['echo', 'insert tests here']
+      # command: ['wget']
+      # args: ['{{ include "goanywhere-gateway.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never
