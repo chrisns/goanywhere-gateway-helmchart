@@ -24,8 +24,28 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: init-myservice
+          image: busybox
+          command: ['touch', '/logs/gagateway.log',]
+          volumeMounts:
+            - name: logs
+              mountPath: /logs
       containers:
-        - name: {{ .Chart.Name }}
+        - name: logs
+          image: busybox
+          command: 
+            - tail
+            - -f
+            - /logs/gagateway.log
+          volumeMounts:
+            - name: logs
+              readOnly: true
+              mountPath: /logs
+        - name: goanywheregateway
+          command:
+            - /usr/local/HelpSystems/GoAnywhere_Gateway/bin/gagatewayd
+            - start-launchd
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -34,19 +54,24 @@ spec:
             - name: http
               containerPort: 80
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: http
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
           volumeMounts:
-          - name: license
-            mountPath: "/usr/local/HelpSystems/Gateway/gateway.lic"
-            subPath: license
-            readOnly: true
+            - name: license
+              mountPath: /usr/local/HelpSystems/GoAnywhere_Gateway/gateway.lic
+              subPath: license
+              readOnly: true
+            - name: config
+              readOnly: true
+              mountPath: /usr/local/HelpSystems/GoAnywhere_Gateway/config
+            - name: logs
+              mountPath: /usr/local/HelpSystems/GoAnywhere_Gateway/logs
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
@@ -66,3 +91,8 @@ spec:
         - name: license
           secret:
             secretName: {{ include "goanywhere-gateway.fullname" . }}
+        - name: config
+          configMap:
+            name: {{ include "goanywhere-gateway.fullname" . }}
+        - name: logs
+          emptyDir: {}
