@@ -1,0 +1,21 @@
+apiVersion: v1
+entries:
+  goanywhere-gateway:
+  - apiVersion: v2
+    appVersion: 2.8.1
+    created: "2021-10-15T15:24:55.025001026Z"
+    description: HelpSystems GoAnywhere Gateway
+    digest: 9812823232ac6c5565783972b0403c4f985159f19e2403b8b7bcfc6433ee45d5
+    icon: https://static.goanywhere.com/images/logos/ga-hs-color-logo.svg
+    maintainers:
+    - email: chris@cns.me.uk
+      name: chrisns
+      url: cns.me
+    name: goanywhere-gateway
+    sources:
+    - https://github.com/chrisns/goanywhere-gateway-helmchart
+    type: application
+    urls:
+    - https://github.com/chrisns/goanywhere-gateway-helmchart/releases/download/goanywhere-gateway-0.1.0/goanywhere-gateway-0.1.0.tgz
+    version: 0.1.0
+generated: "2021-10-15T15:24:55.025007526Z"
