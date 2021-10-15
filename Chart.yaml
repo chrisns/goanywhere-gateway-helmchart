@@ -4,3 +4,9 @@ description: HelpSystems GoAnywhere Gateway
 type: application
 version: 0.1.0
 appVersion: 2.8.1
+maintainers:
+  - name: chrisns
+    email: chris@cns.me.uk
+    url: cns.me
+sources:
+  - https://github.com/chrisns/goanywhere-gateway-helmchart
