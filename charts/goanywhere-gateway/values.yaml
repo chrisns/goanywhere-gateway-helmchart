@@ -6,35 +6,95 @@ image:
   tag: 2.8.1
 
 imagePullSecrets: []
-nameOverride: ""
 
 podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext:
+  fsGroup: 2000
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+    add:
+    - NET_BIND_SERVICE
 
-service:
-  type: ClusterIP
-  port: 80
+serviceType: ClusterIP
 
 resources:
   limits:
-    cpu: 100m
+    cpu: 1000m
     memory: 256Mi
   requests:
-    cpu: 100m
+    cpu: 1000m
     memory: 256Mi
 
 tolerations: []
 
 affinity: {}
 
-license: "aW52YWxpZA=="
+license: "invalid licence file"
+
+portRanges:
+  enabled: true
+  passiveProxyPortRangeFrom: 30000
+  passiveProxyPortRangeTo: 32000
+  udpInternalPortRangeFrom: 9201
+  udpInternalPortRangeTo: 9300
+  udpExternalPortRangeFrom: 32001
+  udpExternalPortRangeTo: 32100
+
+configFiles:
+  gateway.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <gateway controllerAddress="0.0.0.0" controllerPort="9100"
+      dataAddress="0.0.0.0" dataPort="9101" shutdownPort="9105"
+      proxyEnabled="true" proxyAddress="0.0.0.0"
+      proxyPort="9102"
+      passiveProxyAddress="0.0.0.0"
+      passiveProxyPortRangeFrom="30000"
+      passiveProxyPortRangeTo="32000"
+      forwardProxyLocalAddress="0.0.0.0"
+      udpEnabled="true"
+      udpInternalAddress="0.0.0.0"
+      udpInternalPortRangeFrom="9201"
+      udpInternalPortRangeTo="9300"
+      udpExternalAddress="0.0.0.0"
+      udpExternalPortRangeFrom="32001"
+      udpExternalPortRangeTo="32100"
+      minThreads="10" maxThreads="2000" threadKeepAlive="60" udpTimeout="10">
+      <rules>
+        <rule name="default">
+          <loadBalancer algorithm="roundrobin" />
+        </rule>
+        <rule name="https">
+          <loadBalancer algorithm="roundrobin">
+            <sessionPersistence type="ip" timeout="300" />
+          </loadBalancer>
+        </rule>
+        <rule name="agent">
+          <loadBalancer algorithm="roundrobin">
+            <sessionPersistence type="agentIP" />
+          </loadBalancer>
+        </rule>
+      </rules>
+    </gateway>
+  log4j2.xml: |
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Configuration status="error" strict="true">
+      <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+          <PatternLayout>
+            <Pattern>%d{yyyy-MM-dd hh:mm:ss a} %-5p %m%n</Pattern>
+          </PatternLayout>
+        </Console>
+      </Appenders>
+      <Loggers>
+        <Logger name="com.linoma.gag" level="debug" additivity="false">
+          <AppenderRef ref="ConsoleAppender" />
+        </Logger>
+        <Root level="debug">
+          <AppenderRef ref="ConsoleAppender" />
+        </Root>
+      </Loggers>
+    </Configuration>

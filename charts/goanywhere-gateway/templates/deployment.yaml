@@ -24,24 +24,7 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      initContainers:
-        - name: init-myservice
-          image: busybox
-          command: ['touch', '/logs/gagateway.log',]
-          volumeMounts:
-            - name: logs
-              mountPath: /logs
       containers:
-        - name: logs
-          image: busybox
-          command: 
-            - tail
-            - -f
-            - /logs/gagateway.log
-          volumeMounts:
-            - name: logs
-              readOnly: true
-              mountPath: /logs
         - name: goanywheregateway
           command:
             - /usr/local/HelpSystems/GoAnywhere_Gateway/bin/gagatewayd
@@ -51,17 +34,53 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: 80
+            - name: controllerport
+              containerPort: 9100
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            - name: dataport
+              containerPort: 9101
+              protocol: TCP
+            - name: proxyport
+              containerPort: 9102
+              protocol: TCP
+            - name: shutdownport
+              containerPort: 9105
+              protocol: TCP
+          {{ if .Values.portRanges.enabled }}
+          {{- range untilStep (.Values.portRanges.passiveProxyPortRangeFrom | int) (.Values.portRanges.passiveProxyPortRangeTo | int) 1 }}
+            - containerPort: {{ . }}
+              protocol: TCP
+          {{- end }}
+
+          {{- range untilStep (.Values.portRanges.udpInternalPortRangeFrom | int) (.Values.portRanges.udpInternalPortRangeTo | int) 1 }}
+            - containerPort: {{ . }}
+              protocol: UDP
+          {{- end }}
+
+          {{- range untilStep (.Values.portRanges.udpExternalPortRangeFrom | int) (.Values.portRanges.udpExternalPortRangeTo | int) 1 }}
+            - containerPort: {{ . }}
+              protocol: UDP
+          {{- end }}
+          {{ end }}
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            tcpSocket:
+              port: proxyport
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 1
+            successThreshold: 2
+          startupProbe:
+            tcpSocket:
+              port: controllerport
+            failureThreshold: 60
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: controllerport
+            # initialDelaySeconds: 15
+            periodSeconds: 5
+            # successThreshold: 2
+            failureThreshold: 1
           volumeMounts:
             - name: license
               mountPath: /usr/local/HelpSystems/GoAnywhere_Gateway/gateway.lic
@@ -70,8 +89,6 @@ spec:
             - name: config
               readOnly: true
               mountPath: /usr/local/HelpSystems/GoAnywhere_Gateway/config
-            - name: logs
-              mountPath: /usr/local/HelpSystems/GoAnywhere_Gateway/logs
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
@@ -94,5 +111,3 @@ spec:
         - name: config
           configMap:
             name: {{ include "goanywhere-gateway.fullname" . }}
-        - name: logs
-          emptyDir: {}

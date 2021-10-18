@@ -4,16 +4,18 @@
 
 ## Usage
 
-```
-helm repo add goanywhere https://chrisns.github.io/goanywhere-gateway-helmchart
-helm install \
-  --set license=$(cat licensefile|base64) \
+```bash
+# where ./licensefile is the license
+
+$ helm repo add goanywhere https://chrisns.github.io/goanywhere-gateway-helmchart
+$ helm install \
+  --set-file=license=licensefile \
   goanywhere \
   goanywhere/goanywhere-gateway
 ```
 
 ## Remove
 
-```
-helm uninstall goanywhere
+```bash
+$ helm uninstall goanywhere
 ```

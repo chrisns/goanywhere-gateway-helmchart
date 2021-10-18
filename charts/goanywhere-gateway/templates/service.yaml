@@ -5,11 +5,50 @@ metadata:
   labels:
     {{- include "goanywhere-gateway.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.serviceType }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - port: 9100
+      targetPort: controllerport
       protocol: TCP
-      name: http
+      name: controllerport
+
+    - port: 9102
+      targetPort: proxyport
+      protocol: TCP
+      name: proxyport
+
+    - port: 9101
+      targetPort: dataport
+      protocol: TCP
+      name: dataport
+
+    - port: 9105
+      targetPort: shutdownport
+      protocol: TCP
+      name: shutdownport
+{{ if .Values.portRanges.enabled }}
+
+  {{- range untilStep (.Values.portRanges.passiveProxyPortRangeFrom | int) (.Values.portRanges.passiveProxyPortRangeTo | int) 1 }}
+    - port: {{ . }}
+      protocol: TCP
+      targetPort: {{.}}
+      name: proxy{{.}}
+  {{- end }}
+
+  {{- range untilStep (.Values.portRanges.udpInternalPortRangeFrom | int) (.Values.portRanges.udpInternalPortRangeTo | int) 1 }}
+    - port: {{ . }}
+      protocol: UDP
+      targetPort: {{.}}
+      name: internal{{.}}
+  {{- end }}
+
+  {{- range untilStep (.Values.portRanges.udpExternalPortRangeFrom | int) (.Values.portRanges.udpExternalPortRangeTo | int) 1 }}
+    - port: {{ . }}
+      protocol: UDP
+      targetPort: {{.}}
+      name: external{{.}}
+  {{- end }}
+{{ end }}
+
   selector:
     {{- include "goanywhere-gateway.selectorLabels" . | nindent 4 }}
