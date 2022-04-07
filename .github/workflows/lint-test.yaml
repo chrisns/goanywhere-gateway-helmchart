@@ -20,7 +20,7 @@ jobs:
         with:
           version: v3.4.0
 
-      - uses: actions/setup-python@7f80679172b057fc5e90d70d197929d454754a5a # tag=v2
+      - uses: actions/setup-python@21c0493ecfd34b1217f0a90ec19a327f3cc0a048 # tag=v3
         with:
           python-version: 3.7
 
